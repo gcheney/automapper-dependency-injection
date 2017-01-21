@@ -1,0 +1,12 @@
+@model IEnumerable<AutoMapperDI.ViewModels.BlobViewModel>
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<h1>Blobs</h1>
+
+@foreach (var blob in Model)
+{
+    <p>@blob.Id - @blob.Content</p>
+}
