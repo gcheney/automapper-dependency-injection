@@ -11,6 +11,13 @@ namespace AutoMapperDI.Controllers
 {
     public class HomeController : Controller
     {
+        private IMapper _mapper;
+
+        public HomeController(IMapper mapper)
+        {
+            _mapper = mapper;
+        }
+        
         public IActionResult Index()
         {
             var blobs = new List<Blob>()
@@ -20,7 +27,7 @@ namespace AutoMapperDI.Controllers
                 new Blob { Id = 3, Content = "Three"}
             };
 
-            var viewModel = Mapper.Map<IEnumerable<BlobViewModel>>(blobs);
+            var viewModel = _mapper.Map<IEnumerable<BlobViewModel>>(blobs);
             return View(viewModel);
         }
 

@@ -15,6 +15,8 @@ namespace AutoMapperDI
 {
     public class Startup
     {
+        private MapperConfiguration MapperConfiguration { get; set; }
+
         public Startup(IHostingEnvironment env)
         {
             var builder = new ConfigurationBuilder()
@@ -22,7 +24,13 @@ namespace AutoMapperDI
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
                 .AddEnvironmentVariables();
+
             Configuration = builder.Build();
+
+            MapperConfiguration = new MapperConfiguration(config => 
+            {
+                config.AddProfile(new AutoMapperProfileConfiguration());
+            });
         }
 
         public IConfigurationRoot Configuration { get; }
@@ -30,19 +38,14 @@ namespace AutoMapperDI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // Add framework services.
-            services.AddMvc();
+            services.AddSingleton<IMapper>(sp => MapperConfiguration.CreateMapper());
             
+            services.AddMvc();            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            Mapper.Initialize(config => 
-            {
-                config.CreateMap<Blob, BlobViewModel>().ReverseMap();
-            });
-
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
